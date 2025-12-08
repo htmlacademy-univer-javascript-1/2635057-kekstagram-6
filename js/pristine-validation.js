@@ -12,7 +12,6 @@ function setupImageUploadForm() {
   let currentValidationError = '';
 
   if (typeof Pristine === 'undefined') {
-    console.error('Pristine не загружен. Проверьте подключение в index.html');
     return;
   }
 
