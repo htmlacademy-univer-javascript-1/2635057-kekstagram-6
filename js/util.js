@@ -36,4 +36,3 @@ function getRandomInt(min, max) {
   }
   
   export { getRandomInt, getRandomArrayElement, checkStringLength, isPalindrome, extractNumber };
-  //
