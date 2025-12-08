@@ -39,11 +39,11 @@ function createPhoto() {
   const comments = Array.from({ length: commentsCount }, createComment);
 
   return {
-    id,
+    id: id,
     url: `photos/${id}.jpg`,
     description: getRandomArrayElement(DESCRIPTIONS),
     likes: getRandomInt(15, 200),
-    comments
+    comments: comments
   };
 }
 

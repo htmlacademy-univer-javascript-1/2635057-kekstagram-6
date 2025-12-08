@@ -1,29 +1,23 @@
-function getRandomInt(min, max) {
-    if (min < 0 || max < 0) {
-      return -1;
-    }
+const getRandomInt = (a, b) => {
+    const lower = Math.ceil(Math.min(a, b));
+    const upper = Math.floor(Math.max(a, b));
+    const result = Math.random() * (upper - lower + 1) + lower;
+    return Math.floor(result);
+  };
   
-    if (min > max) {
-      [min, max] = [max, min];
-    }
-  
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-  
-  function getRandomArrayElement(elements) {
-    return elements[getRandomInt(0, elements.length - 1)];
-  }
+  const getRandomArrayElement = (elements) => elements[getRandomInt(0, elements.length - 1)];
   
   function createRandomIdFromRangeGenerator(min, max) {
     const previousValues = [];
   
     return function() {
       let currentValue = getRandomInt(min, max);
-  
+      if (previousValues.length >= (max - min + 1)) {
+        return null;
+      }
       while (previousValues.includes(currentValue)) {
         currentValue = getRandomInt(min, max);
       }
-  
       previousValues.push(currentValue);
       return currentValue;
     };
