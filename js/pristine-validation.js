@@ -5,9 +5,6 @@ const HASHTAG_COUNT_LIMIT = 5;
 function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
 
-  if (!uploadFormElement) {
-    console.error('Элемент .img-upload__form не найден на странице');
-    return;
   }
 
   const imageFileInput = uploadFormElement.querySelector('.img-upload__input');
@@ -18,10 +15,6 @@ function setupImageUploadForm() {
 
   let currentValidationError = '';
 
-  if (typeof Pristine === 'undefined') {
-    console.error('Библиотека Pristine не загружена');
-    return;
-  }
 
   const validator = new Pristine(uploadFormElement, {
     classTo: 'img-upload__field-wrapper',
@@ -189,6 +182,5 @@ function setupImageUploadForm() {
   uploadFormElement.addEventListener('submit', handleFormSubmit);
 
   updateSubmitButtonState();
-}
 
 export { setupImageUploadForm };

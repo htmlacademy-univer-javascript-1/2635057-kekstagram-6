@@ -4,11 +4,6 @@ function renderPictures(picturesData) {
   const pictureTemplate = document.querySelector('#picture').content;
   const picturesList = document.querySelector('.pictures__list');
 
-  if (!pictureTemplate || !picturesList) {
-    console.error('Template или контейнер .pictures__list не найден');
-    return;
-  }
-
   picturesList.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
