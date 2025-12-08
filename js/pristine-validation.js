@@ -1,8 +1,15 @@
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAG_COUNT_LIMIT = 5;
 
+
 function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
+  
+  if (!uploadFormElement) {
+    console.error('Элемент .img-upload__form не найден на странице');
+    return;
+  }
+  
   const imageFileInput = uploadFormElement.querySelector('.img-upload__input');
   const editOverlay = document.querySelector('.img-upload__overlay');
   const closeEditButton = editOverlay.querySelector('#upload-cancel');
@@ -12,6 +19,7 @@ function setupImageUploadForm() {
   let currentValidationError = '';
 
   if (typeof Pristine === 'undefined') {
+    console.error('Библиотека Pristine не загружена');
     return;
   }
 
@@ -24,30 +32,12 @@ function setupImageUploadForm() {
     errorTextClass: 'img-upload__error'
   });
 
+
   const getValidationError = () => currentValidationError;
 
   const validateCommentLength = (commentText) => {
     const maxCommentLength = 140;
     return commentText.length <= maxCommentLength;
-  };
-
-  const displayUploadForm = () => {
-    if (!imageFileInput.files[0]) {
-      return;
-    }
-    editOverlay.classList.remove('hidden');
-    document.body.classList.add('modal-open');
-  };
-
-  const hideUploadForm = () => {
-    editOverlay.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    uploadFormElement.reset();
-    validator.reset();
-    imageFileInput.value = '';
-    const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
-    submitBtn.disabled = false;
-    submitBtn.removeAttribute('title');
   };
 
   const validateHashtagsInput = (hashtagText) => {
@@ -114,6 +104,25 @@ function setupImageUploadForm() {
     } else {
       submitButton.removeAttribute('title');
     }
+  };
+
+  const displayUploadForm = () => {
+    if (!imageFileInput.files[0]) {
+      return;
+    }
+    editOverlay.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+  };
+
+  const hideUploadForm = () => {
+    editOverlay.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    uploadFormElement.reset();
+    validator.reset();
+    imageFileInput.value = '';
+    const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
+    submitBtn.disabled = false;
+    submitBtn.removeAttribute('title');
   };
 
   const onHashtagFieldInput = () => {
