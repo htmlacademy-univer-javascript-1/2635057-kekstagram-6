@@ -19,7 +19,7 @@ const MESSAGES = [
   'Лица у людей на фотке перекошены, как будто их избивают.',
 ];
 
-const NAMES = ['Настя', 'Лера', 'Вика', 'Карина', 'Максим', 'Артём', 'Саша', 'Даша', 'Аркадий'];
+const NAMES = ['Настя', 'Лера', 'Вика', 'Карина', 'Максим', 'Артём', 'Миша', 'Саша', 'Даша', 'Аркадий'];
 
 const generateRandomUniqueId = createRandomIdFromRangeGenerator(1, 1000);
 const generatePhotoId = createRandomIdFromRangeGenerator(1, 25);
