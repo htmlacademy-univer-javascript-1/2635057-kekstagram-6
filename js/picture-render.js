@@ -1,3 +1,5 @@
+import { openFullscreen } from './fullscreen-preview.js';
+
 function renderPictures(picturesData) {
   const pictureTemplate = document.querySelector('#picture').content;
   const picturesContainer = document.querySelector('.pictures');
@@ -19,6 +21,11 @@ function renderPictures(picturesData) {
     imgElement.alt = picture.description;
     likesElement.textContent = picture.likes;
     commentsElement.textContent = picture.comments.length;
+
+    pictureLink.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      openFullscreen(picture);
+    });
 
     fragment.appendChild(pictureElement);
   });
