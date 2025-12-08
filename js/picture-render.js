@@ -2,11 +2,14 @@ import { openFullscreen } from './fullscreen-preview.js';
 
 function renderPictures(picturesData) {
   const pictureTemplate = document.querySelector('#picture').content;
-  const picturesContainer = document.querySelector('.pictures');
+  const picturesList = document.querySelector('.pictures__list');
 
-  if (!pictureTemplate || !picturesContainer) {
+  if (!pictureTemplate || !picturesList) {
+    console.error('Template или контейнер .pictures__list не найден');
     return;
   }
+
+  picturesList.innerHTML = '';
 
   const fragment = document.createDocumentFragment();
 
@@ -19,6 +22,7 @@ function renderPictures(picturesData) {
 
     imgElement.src = picture.url;
     imgElement.alt = picture.description;
+
     likesElement.textContent = picture.likes;
     commentsElement.textContent = picture.comments.length;
 
@@ -30,8 +34,7 @@ function renderPictures(picturesData) {
     fragment.appendChild(pictureElement);
   });
 
-  picturesContainer.innerHTML = '';
-  picturesContainer.appendChild(fragment);
+  picturesList.appendChild(fragment);
 }
 
 export { renderPictures };

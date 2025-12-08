@@ -1363,3 +1363,23 @@ main {
 .hidden {
   display: none;
 }
+
+.pictures__list {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 колонок для больших экранов */
+  gap: 10px; /* расстояние между фото */
+  width: 700%;
+  margin-top: 100px;
+}
+
+@media (max-width: 1359px) {
+  .pictures__list {
+    grid-template-columns: repeat(5, 1fr); /* 5 колонок */
+  }
+}
+
+@media (max-width: 1023px) {
+  .pictures__list {
+    grid-template-columns: repeat(3, 1fr); /* 3 колонки для маленьких экранов */
+  }
+}
