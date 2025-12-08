@@ -1369,7 +1369,7 @@ main {
   grid-template-columns: repeat(7, 1fr); /* 7 колонок для больших экранов */
   gap: 10px; /* расстояние между фото */
   width: 700%;
-  margin-top: 100px;
+  margin-top: 10px;
 }
 
 @media (max-width: 1359px) {
