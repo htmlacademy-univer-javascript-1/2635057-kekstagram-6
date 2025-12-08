@@ -4,12 +4,12 @@ const HASHTAG_COUNT_LIMIT = 5;
 
 function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
-  
+
   if (!uploadFormElement) {
     console.error('Элемент .img-upload__form не найден на странице');
     return;
   }
-  
+
   const imageFileInput = uploadFormElement.querySelector('.img-upload__input');
   const editOverlay = document.querySelector('.img-upload__overlay');
   const closeEditButton = editOverlay.querySelector('#upload-cancel');
