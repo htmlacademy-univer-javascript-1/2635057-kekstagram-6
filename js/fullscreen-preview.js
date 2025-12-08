@@ -13,11 +13,11 @@ commentsLoader.classList.add('hidden');
 
 function renderComments(comments) {
   socialComments.innerHTML = '';
-  
+
   comments.forEach((comment) => {
     const commentElement = document.createElement('li');
     commentElement.classList.add('social__comment');
-    
+
     commentElement.innerHTML = `
       <img
         class="social__picture"
@@ -26,7 +26,7 @@ function renderComments(comments) {
         width="35" height="35">
       <p class="social__text">${comment.message}</p>
     `;
-    
+
     socialComments.appendChild(commentElement);
   });
 }
@@ -37,9 +37,9 @@ function openFullscreen(pictureData) {
   likesCount.textContent = pictureData.likes;
   commentsCount.textContent = pictureData.comments.length;
   socialCaption.textContent = pictureData.description;
-  
+
   renderComments(pictureData.comments);
-  
+
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
 }
