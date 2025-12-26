@@ -1,3 +1,5 @@
+import { resetScaleAndEffects } from './scale-and-effects.js';
+
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAG_COUNT_LIMIT = 5;
 
@@ -113,15 +115,20 @@ function setupImageUploadForm() {
   };
 
   const hideUploadForm = () => {
-    editOverlay.classList.add('hidden');
-    document.body.classList.remove('modal-open');
-    uploadFormElement.reset();
-    validator.reset();
-    imageFileInput.value = '';
-    const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
-    submitBtn.disabled = false;
-    submitBtn.removeAttribute('title');
-  };
+  editOverlay.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  uploadFormElement.reset();
+  validator.reset();
+  imageFileInput.value = '';
+  const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
+  submitBtn.disabled = false;
+  submitBtn.removeAttribute('title');
+  
+  // СБРАСЫВАЕМ МАСШТАБ И ЭФФЕКТЫ
+  if (typeof resetScaleAndEffects === 'function') {
+    resetScaleAndEffects();
+  }
+};
 
   const onHashtagFieldInput = () => {
     validator.validate();
