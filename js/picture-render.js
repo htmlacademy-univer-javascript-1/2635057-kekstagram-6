@@ -2,14 +2,10 @@ import { openFullscreen } from './fullscreen-preview.js';
 
 function renderPictures(picturesData) {
   const pictureTemplate = document.querySelector('#picture').content;
-  const picturesList = document.querySelector('.pictures__list');
+  const picturesContainer = document.querySelector('.pictures');
 
-  if (!pictureTemplate || !picturesList) {
-    console.error('Template или контейнер .pictures__list не найден');
-    return;
-  }
-
-  picturesList.innerHTML = '';
+  const existingPictures = picturesContainer.querySelectorAll('.picture');
+  existingPictures.forEach((picture) => picture.remove());
 
   const fragment = document.createDocumentFragment();
 
@@ -34,7 +30,7 @@ function renderPictures(picturesData) {
     fragment.appendChild(pictureElement);
   });
 
-  picturesList.appendChild(fragment);
+  picturesContainer.appendChild(fragment);
 }
 
 export { renderPictures };

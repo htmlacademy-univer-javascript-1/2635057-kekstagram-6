@@ -1,3 +1,5 @@
+import { resetScaleAndEffects } from './scale-and-effects.js';
+
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAG_COUNT_LIMIT = 5;
 
@@ -6,7 +8,6 @@ function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
 
   if (!uploadFormElement) {
-    console.error('Элемент .img-upload__form не найден на странице');
     return;
   }
 
@@ -19,7 +20,6 @@ function setupImageUploadForm() {
   let currentValidationError = '';
 
   if (typeof Pristine === 'undefined') {
-    console.error('Библиотека Pristine не загружена');
     return;
   }
 
@@ -123,6 +123,11 @@ function setupImageUploadForm() {
     const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
     submitBtn.disabled = false;
     submitBtn.removeAttribute('title');
+
+    // СБРАСЫВАЕМ МАСШТАБ И ЭФФЕКТЫ
+    if (typeof resetScaleAndEffects === 'function') {
+      resetScaleAndEffects();
+    }
   };
 
   const onHashtagFieldInput = () => {
