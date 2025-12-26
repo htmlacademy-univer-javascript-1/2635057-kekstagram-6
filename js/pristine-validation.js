@@ -6,7 +6,6 @@ function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
 
   if (!uploadFormElement) {
-    console.error('Элемент .img-upload__form не найден на странице');
     return;
   }
 
@@ -19,7 +18,6 @@ function setupImageUploadForm() {
   let currentValidationError = '';
 
   if (typeof Pristine === 'undefined') {
-    console.error('Библиотека Pristine не загружена');
     return;
   }
 
