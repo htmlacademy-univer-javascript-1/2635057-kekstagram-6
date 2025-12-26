@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const photos = createPhotos();
   renderPictures(photos);
   setupImageUploadForm();
-  
+
   // Инициализируем масштаб и эффекты только если библиотека загружена
   if (typeof noUiSlider !== 'undefined') {
     initScaleAndEffects();

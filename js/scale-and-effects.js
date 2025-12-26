@@ -87,12 +87,12 @@ const initScale = () => {
 // 2. ЭФФЕКТЫ И СЛАЙДЕР
 const applyEffect = (effect, value) => {
   const settings = EFFECT_SETTINGS[effect];
-  
+
   if (!settings || effect === 'none') {
     previewImageElement.style.filter = '';
     return;
   }
-  
+
   previewImageElement.style.filter = `${settings.filter}(${value}${settings.unit})`;
 };
 
@@ -100,17 +100,17 @@ const updateSlider = (effect) => {
   if (!effectLevelSliderElement.noUiSlider) {
     return;
   }
-  
+
   const settings = EFFECT_SETTINGS[effect];
-  
+
   if (effect === 'none') {
     effectLevelContainerElement.classList.add('hidden');
     applyEffect(effect, 0);
     return;
   }
-  
+
   effectLevelContainerElement.classList.remove('hidden');
-  
+
   effectLevelSliderElement.noUiSlider.updateOptions({
     range: {
       min: settings.min,
@@ -119,7 +119,7 @@ const updateSlider = (effect) => {
     step: settings.step,
     start: settings.max
   });
-  
+
   effectLevelSliderElement.noUiSlider.set(settings.max);
   effectLevelValueElement.value = settings.max;
   applyEffect(effect, settings.max);
@@ -134,7 +134,7 @@ const onSliderUpdate = (values, handle) => {
   const currentValue = values[handle];
   const selectedRadioElement = uploadFormElement.querySelector('.effects__radio:checked');
   const selectedEffect = selectedRadioElement ? selectedRadioElement.value : EFFECT_DEFAULT;
-  
+
   effectLevelValueElement.value = currentValue;
   applyEffect(selectedEffect, currentValue);
 };
@@ -154,27 +154,27 @@ const initEffects = () => {
         from: (value) => Number(value)
       }
     });
-    
+
     effectLevelSliderElement.noUiSlider.on('update', onSliderUpdate);
   }
-  
+
   effectRadiosElements.forEach((radioElement) => {
     radioElement.addEventListener('change', onEffectChange);
   });
-  
+
   updateSlider(EFFECT_DEFAULT);
 };
 
 const resetScaleAndEffects = () => {
   setScale(SCALE_DEFAULT);
-  
+
   const noneRadioElement = uploadFormElement.querySelector('#effect-none');
   if (noneRadioElement) {
     noneRadioElement.checked = true;
   }
-  
+
   updateSlider(EFFECT_DEFAULT);
-  
+
   if (effectLevelSliderElement.noUiSlider) {
     const settings = EFFECT_SETTINGS[EFFECT_DEFAULT];
     effectLevelSliderElement.noUiSlider.set(settings.max);

@@ -115,20 +115,20 @@ function setupImageUploadForm() {
   };
 
   const hideUploadForm = () => {
-  editOverlay.classList.add('hidden');
-  document.body.classList.remove('modal-open');
-  uploadFormElement.reset();
-  validator.reset();
-  imageFileInput.value = '';
-  const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
-  submitBtn.disabled = false;
-  submitBtn.removeAttribute('title');
-  
-  // СБРАСЫВАЕМ МАСШТАБ И ЭФФЕКТЫ
-  if (typeof resetScaleAndEffects === 'function') {
-    resetScaleAndEffects();
-  }
-};
+    editOverlay.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    uploadFormElement.reset();
+    validator.reset();
+    imageFileInput.value = '';
+    const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
+    submitBtn.disabled = false;
+    submitBtn.removeAttribute('title');
+
+    // СБРАСЫВАЕМ МАСШТАБ И ЭФФЕКТЫ
+    if (typeof resetScaleAndEffects === 'function') {
+      resetScaleAndEffects();
+    }
+  };
 
   const onHashtagFieldInput = () => {
     validator.validate();
