@@ -26,7 +26,7 @@ function checkStringLength(str, maxLength) {
     return parseInt(digits.join(''), 10);
   }
   
-  console.log(extractNumber('2023 год'));            // 2023
+  console.log(extractNumber('2025 год'));            // 2023
   console.log(extractNumber('ECMAScript 2022'));     // 2022
   console.log(extractNumber('1 кефир, 0.5 батона')); // 105
   console.log(extractNumber('агент 007'));           // 7
