@@ -13,7 +13,7 @@ function showLoadError(message) {
       <button class="retry-button">Попробовать снова</button>
     </div>
   `;
-  
+
   errorContainer.style.cssText = `
     position: fixed;
     top: 20px;
@@ -25,15 +25,15 @@ function showLoadError(message) {
     z-index: 1000;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   `;
-  
+
   document.body.appendChild(errorContainer);
-  
+
   setTimeout(() => {
     if (errorContainer.parentNode) {
       errorContainer.remove();
     }
   }, 5000);
-  
+
   const retryButton = errorContainer.querySelector('.retry-button');
   retryButton.addEventListener('click', () => {
     errorContainer.remove();
@@ -43,7 +43,7 @@ function showLoadError(message) {
 
 async function loadAndDisplayPhotos() {
   const pictureContainer = document.querySelector('.pictures');
-  
+
   const loadingIndicator = document.createElement('div');
   loadingIndicator.className = 'photos-loading';
   loadingIndicator.textContent = 'Загружаем фотографии...';
@@ -53,24 +53,24 @@ async function loadAndDisplayPhotos() {
     color: #ffe753;
     font-size: 18px;
   `;
-  
+
   pictureContainer.appendChild(loadingIndicator);
-  
+
   try {
     const photos = await fetchPhotoCollection();
-    
+
     loadingIndicator.remove();
-    
+
     renderPictures(photos);
-    
+
     if (typeof setupPhotoFilters === 'function') {
       setupPhotoFilters(photos);
     }
-    
+
   } catch (error) {
     loadingIndicator.remove();
     showLoadError(error.message);
-    
+
     const fallbackMessage = document.createElement('div');
     fallbackMessage.className = 'photos-fallback';
     fallbackMessage.innerHTML = `
@@ -82,9 +82,9 @@ async function loadAndDisplayPhotos() {
       padding: 40px;
       color: #ffe753;
     `;
-    
+
     pictureContainer.appendChild(fallbackMessage);
-    
+
     const reloadButton = fallbackMessage.querySelector('.reload-button');
     reloadButton.addEventListener('click', () => {
       window.location.reload();
@@ -94,9 +94,9 @@ async function loadAndDisplayPhotos() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAndDisplayPhotos();
-  
+
   setupImageUploadForm();
-  
+
   if (typeof noUiSlider !== 'undefined') {
     initScaleAndEffects();
   }

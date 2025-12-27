@@ -7,12 +7,12 @@ const HASHTAG_COUNT_LIMIT = 5;
 function showNotification(type, message = '') {
   const notification = document.createElement('div');
   notification.className = `form-${type}-notification`;
-  
+
   const icons = {
     success: '✅',
     error: '❌'
   };
-  
+
   notification.innerHTML = `
     <div class="notification-content">
       <span class="notification-icon">${icons[type] || ''}</span>
@@ -20,7 +20,7 @@ function showNotification(type, message = '') {
       <button class="notification-close">×</button>
     </div>
   `;
-  
+
   notification.style.cssText = `
     position: fixed;
     top: 20px;
@@ -34,9 +34,9 @@ function showNotification(type, message = '') {
     z-index: 10000;
     animation: slideIn 0.3s ease;
   `;
-  
+
   document.body.appendChild(notification);
-  
+
   const style = document.createElement('style');
   style.textContent = `
     @keyframes slideIn {
@@ -50,7 +50,7 @@ function showNotification(type, message = '') {
     }
   `;
   document.head.appendChild(style);
-  
+
   const closeBtn = notification.querySelector('.notification-close');
   closeBtn.addEventListener('click', () => {
     notification.style.animation = 'slideOut 0.3s ease';
@@ -63,7 +63,7 @@ function showNotification(type, message = '') {
       }
     }, 300);
   });
-  
+
   setTimeout(() => {
     if (notification.parentNode) {
       notification.style.animation = 'slideOut 0.3s ease';
@@ -77,7 +77,7 @@ function showNotification(type, message = '') {
       }, 300);
     }
   }, 5000);
-  
+
   const closeOnOutsideClick = (event) => {
     if (!notification.contains(event.target)) {
       notification.remove();
@@ -87,7 +87,7 @@ function showNotification(type, message = '') {
       }
     }
   };
-  
+
   setTimeout(() => {
     document.addEventListener('click', closeOnOutsideClick);
   }, 100);
@@ -211,7 +211,7 @@ function setupImageUploadForm() {
     const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
     submitBtn.disabled = false;
     submitBtn.removeAttribute('title');
-    
+
     if (typeof resetScaleAndEffects === 'function') {
       resetScaleAndEffects();
     }
@@ -238,47 +238,47 @@ function setupImageUploadForm() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    
+
     const isFormValid = validator.validate();
-    
+
     if (!isFormValid) {
       validator.validate();
       updateSubmitButtonState();
       return;
     }
-    
+
     const submitButton = uploadFormElement.querySelector('.img-upload__submit');
     const originalText = submitButton.textContent;
     submitButton.disabled = true;
     submitButton.textContent = 'Отправляем...';
-    
+
     try {
       const formData = new FormData(uploadFormElement);
-      
+
       const result = await submitFormData(formData);
-      
+
       if (result.success) {
         showNotification('success', 'Фотография успешно опубликована!');
-        
+
         hideUploadForm();
-        
+
         setTimeout(() => {
           if (typeof loadAndDisplayPhotos === 'function') {
             loadAndDisplayPhotos();
           }
         }, 1000);
-        
+
       } else {
         showNotification('error', result.error || 'Ошибка при отправке');
-        
+
         submitButton.disabled = false;
         submitButton.textContent = originalText;
       }
-      
+
     } catch (error) {
       console.error('Ошибка при обработке формы:', error);
       showNotification('error', 'Неизвестная ошибка. Попробуйте позже');
-      
+
       submitButton.disabled = false;
       submitButton.textContent = originalText;
     }
