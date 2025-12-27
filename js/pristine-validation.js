@@ -1,8 +1,97 @@
 import { resetScaleAndEffects } from './scale-and-effects.js';
+import { submitFormData } from './server-api.js';
 
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAG_COUNT_LIMIT = 5;
 
+function showNotification(type, message = '') {
+  const notification = document.createElement('div');
+  notification.className = `form-${type}-notification`;
+  
+  const icons = {
+    success: '✅',
+    error: '❌'
+  };
+  
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">${icons[type] || ''}</span>
+      <span class="notification-text">${message}</span>
+      <button class="notification-close">×</button>
+    </div>
+  `;
+  
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${type === 'success' ? '#4caf50' : '#f44336'};
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  document.body.appendChild(notification);
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+    
+    @keyframes slideOut {
+      from { transform: translateX(-50%) translateY(0); opacity: 1; }
+      to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  const closeBtn = notification.querySelector('.notification-close');
+  closeBtn.addEventListener('click', () => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+      if (style.parentNode) {
+        style.remove();
+      }
+    }, 300);
+  });
+  
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+        if (style.parentNode) {
+          style.remove();
+        }
+      }, 300);
+    }
+  }, 5000);
+  
+  const closeOnOutsideClick = (event) => {
+    if (!notification.contains(event.target)) {
+      notification.remove();
+      document.removeEventListener('click', closeOnOutsideClick);
+      if (style.parentNode) {
+        style.remove();
+      }
+    }
+  };
+  
+  setTimeout(() => {
+    document.addEventListener('click', closeOnOutsideClick);
+  }, 100);
+}
 
 function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
@@ -31,7 +120,6 @@ function setupImageUploadForm() {
     errorTextTag: 'span',
     errorTextClass: 'img-upload__error'
   });
-
 
   const getValidationError = () => currentValidationError;
 
@@ -123,8 +211,7 @@ function setupImageUploadForm() {
     const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
     submitBtn.disabled = false;
     submitBtn.removeAttribute('title');
-
-    // СБРАСЫВАЕМ МАСШТАБ И ЭФФЕКТЫ
+    
     if (typeof resetScaleAndEffects === 'function') {
       resetScaleAndEffects();
     }
@@ -149,15 +236,51 @@ function setupImageUploadForm() {
     }
   };
 
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
+    
     const isFormValid = validator.validate();
-
-    if (isFormValid) {
-      uploadFormElement.submit();
-    } else {
+    
+    if (!isFormValid) {
       validator.validate();
       updateSubmitButtonState();
+      return;
+    }
+    
+    const submitButton = uploadFormElement.querySelector('.img-upload__submit');
+    const originalText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = 'Отправляем...';
+    
+    try {
+      const formData = new FormData(uploadFormElement);
+      
+      const result = await submitFormData(formData);
+      
+      if (result.success) {
+        showNotification('success', 'Фотография успешно опубликована!');
+        
+        hideUploadForm();
+        
+        setTimeout(() => {
+          if (typeof loadAndDisplayPhotos === 'function') {
+            loadAndDisplayPhotos();
+          }
+        }, 1000);
+        
+      } else {
+        showNotification('error', result.error || 'Ошибка при отправке');
+        
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+      
+    } catch (error) {
+      console.error('Ошибка при обработке формы:', error);
+      showNotification('error', 'Неизвестная ошибка. Попробуйте позже');
+      
+      submitButton.disabled = false;
+      submitButton.textContent = originalText;
     }
   };
 
