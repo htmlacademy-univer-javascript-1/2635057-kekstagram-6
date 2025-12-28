@@ -2,6 +2,8 @@ import { renderPictures } from './picture-render.js';
 import { setupImageUploadForm } from './pristine-validation.js';
 import { initScaleAndEffects } from './scale-and-effects.js';
 import { fetchPhotoCollection } from './server-api.js';
+import { PhotoFilters } from './photo-filters.js';
+
 
 function showLoadError(message) {
   const errorContainer = document.createElement('div');
@@ -41,6 +43,12 @@ function showLoadError(message) {
   });
 }
 
+let filterManager = null;
+
+function updatePhotoDisplay(photos) {
+  renderPictures(photos);
+}
+
 async function loadAndDisplayPhotos() {
   const pictureContainer = document.querySelector('.pictures');
 
@@ -63,9 +71,8 @@ async function loadAndDisplayPhotos() {
 
     renderPictures(photos);
 
-    if (typeof setupPhotoFilters === 'function') {
-      setupPhotoFilters(photos);
-    }
+    filterManager = new PhotoFilters();
+    filterManager.setup(photos, updatePhotoDisplay);
 
   } catch (error) {
     loadingIndicator.remove();
@@ -91,6 +98,8 @@ async function loadAndDisplayPhotos() {
     });
   }
 }
+
+window.loadAndDisplayPhotos = loadAndDisplayPhotos;
 
 document.addEventListener('DOMContentLoaded', () => {
   loadAndDisplayPhotos();
