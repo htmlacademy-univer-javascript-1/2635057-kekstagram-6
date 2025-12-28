@@ -3,9 +3,12 @@ import { setupImageUploadForm } from './pristine-validation.js';
 import { initScaleAndEffects } from './scale-and-effects.js';
 import { fetchPhotoCollection } from './server-api.js';
 import { PhotoFilters } from './photo-filters.js';
+import { showErrorMessage as showServerError } from './notifications.js';
 
 
 function showLoadError(message) {
+  showServerError();
+
   const errorContainer = document.createElement('div');
   errorContainer.className = 'load-error-notification';
   errorContainer.innerHTML = `

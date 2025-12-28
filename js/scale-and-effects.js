@@ -76,6 +76,12 @@ class ImageScaler {
     this.updateScaleDisplay();
     this.applyScaleToImage();
   }
+
+  resetForNewImage() {
+    this.currentScale = CONFIG.scale.default;
+    this.updateScaleDisplay();
+    this.applyScaleToImage();
+  }
 }
 
 class ImageEffects {
@@ -208,6 +214,10 @@ class ImageEffects {
   restoreDefaults() {
     this.selectDefaultEffect();
   }
+
+  resetForNewImage() {
+    this.selectDefaultEffect();
+  }
 }
 
 class ImageEditor {
@@ -224,6 +234,11 @@ class ImageEditor {
   reset() {
     this.scaler.restoreDefaults();
     this.effects.restoreDefaults();
+  }
+
+  resetForNewImage() {
+    this.scaler.resetForNewImage();
+    this.effects.resetForNewImage();
   }
 }
 

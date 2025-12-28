@@ -1,8 +1,14 @@
 import { resetScaleAndEffects } from './scale-and-effects.js';
 import { submitFormData } from './server-api.js';
+import { showSuccessMessage, showErrorMessage } from './notifications.js';
+
 
 const HASHTAG_MAX_LENGTH = 20;
 const HASHTAG_COUNT_LIMIT = 5;
+const FILE_VALIDATION = {
+  maxSize: 5 * 1024 * 1024,
+  allowedTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+};
 
 function showNotification(type, message = '') {
   const notification = document.createElement('div');
@@ -93,6 +99,19 @@ function showNotification(type, message = '') {
   }, 100);
 }
 
+function showLoadingMessage() {
+  const messagesTemplate = document.querySelector('#messages');
+  if (!messagesTemplate) {return null;}
+
+  const loadingElement = messagesTemplate.content.cloneNode(true);
+  const loadingContainer = loadingElement.querySelector('.img-upload__message');
+
+  const formContainer = document.querySelector('.img-upload__wrapper');
+  formContainer.appendChild(loadingContainer);
+
+  return loadingContainer;
+}
+
 function setupImageUploadForm() {
   const uploadFormElement = document.querySelector('.img-upload__form');
 
@@ -105,6 +124,8 @@ function setupImageUploadForm() {
   const closeEditButton = editOverlay.querySelector('#upload-cancel');
   const hashtagInput = uploadFormElement.querySelector('.text__hashtags');
   const commentTextarea = uploadFormElement.querySelector('.text__description');
+  const imagePreview = uploadFormElement.querySelector('.img-upload__preview img');
+  const effectsPreviews = uploadFormElement.querySelectorAll('.effects__preview');
 
   let currentValidationError = '';
 
@@ -195,9 +216,32 @@ function setupImageUploadForm() {
   };
 
   const displayUploadForm = () => {
-    if (!imageFileInput.files[0]) {
+    const file = imageFileInput.files[0];
+    if (!file) {
       return;
     }
+
+    if (!FILE_VALIDATION.allowedTypes.includes(file.type.toLowerCase())) {
+      showNotification('error', 'Недопустимый формат файла. Разрешены: JPEG, PNG, GIF, WebP');
+      imageFileInput.value = '';
+      return;
+    }
+
+    if (file.size > FILE_VALIDATION.maxSize) {
+      showNotification('error', 'Файл слишком большой. Максимальный размер: 5MB');
+      imageFileInput.value = '';
+      return;
+    }
+
+    const imageUrl = URL.createObjectURL(file);
+
+    imagePreview.src = imageUrl;
+    imagePreview.alt = 'Ваше загруженное изображение';
+
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${imageUrl})`;
+    });
+
     editOverlay.classList.remove('hidden');
     document.body.classList.add('modal-open');
   };
@@ -207,7 +251,20 @@ function setupImageUploadForm() {
     document.body.classList.remove('modal-open');
     uploadFormElement.reset();
     validator.reset();
+
+    if (imagePreview.src && imagePreview.src.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreview.src);
+    }
+
+    imagePreview.src = 'img/upload-default-image.jpg';
+    imagePreview.alt = 'Предварительный просмотр фотографии';
+
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = 'url("img/upload-default-image.jpg")';
+    });
+
     imageFileInput.value = '';
+
     const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
     submitBtn.disabled = false;
     submitBtn.removeAttribute('title');
@@ -252,13 +309,19 @@ function setupImageUploadForm() {
     submitButton.disabled = true;
     submitButton.textContent = 'Отправляем...';
 
+    const loadingMessage = showLoadingMessage();
+
     try {
       const formData = new FormData(uploadFormElement);
 
       const result = await submitFormData(formData);
 
+      if (loadingMessage && loadingMessage.parentNode) {
+        loadingMessage.parentNode.removeChild(loadingMessage);
+      }
+
       if (result.success) {
-        showNotification('success', 'Фотография успешно опубликована!');
+        showSuccessMessage();
 
         hideUploadForm();
 
@@ -269,7 +332,7 @@ function setupImageUploadForm() {
         }, 1000);
 
       } else {
-        showNotification('error', result.error || 'Ошибка при отправке');
+        showErrorMessage();
 
         submitButton.disabled = false;
         submitButton.textContent = originalText;
@@ -277,7 +340,12 @@ function setupImageUploadForm() {
 
     } catch (error) {
       console.error('Ошибка при обработке формы:', error);
-      showNotification('error', 'Неизвестная ошибка. Попробуйте позже');
+
+      if (loadingMessage && loadingMessage.parentNode) {
+        loadingMessage.parentNode.removeChild(loadingMessage);
+      }
+
+      showErrorMessage();
 
       submitButton.disabled = false;
       submitButton.textContent = originalText;
