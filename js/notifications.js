@@ -1,4 +1,4 @@
-export function showSuccessMessage() {
+export function showSuccessMessage(onCloseCallback = null) {
   const successTemplate = document.querySelector('#success');
   if (!successTemplate) {return;}
 
@@ -14,6 +14,9 @@ export function showSuccessMessage() {
     }
     document.removeEventListener('keydown', onEscapePress);
     document.removeEventListener('click', onOutsideClick);
+    if (typeof onCloseCallback === 'function') {
+      onCloseCallback();
+    }
   };
 
   const onEscapePress = (evt) => {
@@ -36,13 +39,13 @@ export function showSuccessMessage() {
   }, 100);
 }
 
-export function showErrorMessage() {
+export function showErrorMessage(onCloseCallback = null) {
   const errorTemplate = document.querySelector('#error');
   if (!errorTemplate) {return;}
 
   const errorElement = errorTemplate.content.cloneNode(true);
   const errorContainer = errorElement.querySelector('.error');
-  const errorButton = errorContainer.querySelector('.error__button');
+  const errorButton = errorElement.querySelector('.error__button');
 
   document.body.appendChild(errorElement);
 
@@ -52,6 +55,9 @@ export function showErrorMessage() {
     }
     document.removeEventListener('keydown', onEscapePress);
     document.removeEventListener('click', onOutsideClick);
+    if (typeof onCloseCallback === 'function') {
+      onCloseCallback();
+    }
   };
 
   const onEscapePress = (evt) => {

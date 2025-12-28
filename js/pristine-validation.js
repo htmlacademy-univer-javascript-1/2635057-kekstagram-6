@@ -128,6 +128,7 @@ function setupImageUploadForm() {
   const effectsPreviews = uploadFormElement.querySelectorAll('.effects__preview');
 
   let currentValidationError = '';
+  let isFormSubmitted = false;
 
   if (typeof Pristine === 'undefined') {
     return;
@@ -207,7 +208,7 @@ function setupImageUploadForm() {
     const submitButton = uploadFormElement.querySelector('.img-upload__submit');
     const isFormValid = validator.validate();
 
-    submitButton.disabled = !isFormValid;
+    submitButton.disabled = !isFormValid || isFormSubmitted;
     if (!isFormValid) {
       submitButton.setAttribute('title', 'Исправьте ошибки в форме');
     } else {
@@ -246,11 +247,12 @@ function setupImageUploadForm() {
     document.body.classList.add('modal-open');
   };
 
-  const hideUploadForm = () => {
+  const hideUploadForm = (clearFileInput = true) => {
     editOverlay.classList.add('hidden');
     document.body.classList.remove('modal-open');
     uploadFormElement.reset();
     validator.reset();
+    isFormSubmitted = false;
 
     if (imagePreview.src && imagePreview.src.startsWith('blob:')) {
       URL.revokeObjectURL(imagePreview.src);
@@ -263,10 +265,13 @@ function setupImageUploadForm() {
       preview.style.backgroundImage = 'url("img/upload-default-image.jpg")';
     });
 
-    imageFileInput.value = '';
+    if (clearFileInput) {
+      imageFileInput.value = '';
+    }
 
     const submitBtn = uploadFormElement.querySelector('.img-upload__submit');
     submitBtn.disabled = false;
+    submitBtn.textContent = 'Опубликовать';
     submitBtn.removeAttribute('title');
 
     if (typeof resetScaleAndEffects === 'function') {
@@ -306,6 +311,7 @@ function setupImageUploadForm() {
 
     const submitButton = uploadFormElement.querySelector('.img-upload__submit');
     const originalText = submitButton.textContent;
+    isFormSubmitted = true;
     submitButton.disabled = true;
     submitButton.textContent = 'Отправляем...';
 
@@ -321,34 +327,33 @@ function setupImageUploadForm() {
       }
 
       if (result.success) {
-        showSuccessMessage();
-
-        hideUploadForm();
-
-        setTimeout(() => {
-          if (typeof loadAndDisplayPhotos === 'function') {
-            loadAndDisplayPhotos();
-          }
-        }, 1000);
+        showSuccessMessage(() => {
+          hideUploadForm();
+          setTimeout(() => {
+            if (typeof loadAndDisplayPhotos === 'function') {
+              loadAndDisplayPhotos();
+            }
+          }, 100);
+        });
 
       } else {
-        showErrorMessage();
-
-        submitButton.disabled = false;
-        submitButton.textContent = originalText;
+        isFormSubmitted = false;
+        showErrorMessage(() => {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        });
       }
 
-    } catch (error) {
-      console.error('Ошибка при обработке формы:', error);
-
+    } catch (err) {
       if (loadingMessage && loadingMessage.parentNode) {
         loadingMessage.parentNode.removeChild(loadingMessage);
       }
 
-      showErrorMessage();
-
-      submitButton.disabled = false;
-      submitButton.textContent = originalText;
+      isFormSubmitted = false;
+      showErrorMessage(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      });
     }
   };
 
@@ -369,7 +374,7 @@ function setupImageUploadForm() {
   );
 
   imageFileInput.addEventListener('change', displayUploadForm);
-  closeEditButton.addEventListener('click', hideUploadForm);
+  closeEditButton.addEventListener('click', () => hideUploadForm());
   document.addEventListener('keydown', handleDocumentEscape);
 
   [hashtagInput, commentTextarea].forEach((inputField) => {
